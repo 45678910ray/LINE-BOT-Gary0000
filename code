@@ -11,7 +11,7 @@ from linebot.models import *
 app = Flask(__name__)
 
 # Channel Access Token
-line_bot_api = LineBotApi('your line api')
+line_bot_api = LineBotApi('/8Fv03QqpcCxwq/8XJWgN8AeYBUAQMQ4/c+wyiFJU6UgDEwH+J28Q8hQbEjzsTW3AtbQF1NsFNPxUW5Vnbz4cD+PVZNbCLX5W7yWkTNdA7PJTl+X8uhV9gvCdHyWS8r81nNATevQzkRX3Z7G60dBWgdB04t89/1O/w1cDnyilFU=')
 # Channel Secret
 handler = WebhookHandler('873c79ccb6e05a6e3fdb848dfecf1748')
 
@@ -44,7 +44,6 @@ def Get_Cve_NVD(CVE):
     urlNVD = 'https://nvd.nist.gov/vuln/detail/' + CVE
     res = requests.get(urlNVD)
     sp = BeautifulSoup(res.text, 'html.parser')
-
     Score = ""
     detal = sp.select(".severityDetail")
     if detal[0].text != ' N/A':
@@ -59,10 +58,12 @@ def Get_Cve_NVD(CVE):
     detal = sp.select("#vulnTechnicalDetailsDiv table.table-striped.table-condensed.table-bordered.detail-table a")
     for i in range(len(detal)):
         Weakness += detal[i].text + ":" + '\n' + detal[i]['href'] + '\n'
-        
+
     allNVD = ""
     allNVD += Score + Weakness
     return allNVD
+
+
 def Get_Cve_CVSSdetail20(CVE):
     urlNVD = "https://nvd.nist.gov/vuln/detail/" + CVE
     res = requests.get(urlNVD)
@@ -79,35 +80,30 @@ def Get_Cve_CVSSdetail20(CVE):
             CVSSdetail += "Access Vector(攻擊向量):" + "Adjacent Network(由受限制的網路進行攻擊，如區域網路及藍芽等)" + '\n'
         elif a[0].split(":")[1] == "N":
             CVSSdetail += "Access Vector(攻擊向量):" + "Network(由網際網路網路進行攻擊)" + '\n'
-
         if a[1].split(":")[1] == "H":
             CVSSdetail += "Access Complexity(攻擊複雜度):" + "HIGH" + '\n'
         elif a[1].split(":")[1] == "M":
             CVSSdetail += "Access Complexity(攻擊複雜度):" + "Medium" + '\n'
         elif a[1].split(":")[1] == "L":
             CVSSdetail += "Access Complexity(攻擊複雜度):" + "LOW" + '\n'
-
         if a[2].split(":")[1] == "M":
             CVSSdetail += "Authentication(認證方式):" + "Multiple(此漏洞需要攻擊者進行兩次或兩次以上的身份驗證)" + '\n'
         elif a[2].split(":")[1] == "S":
             CVSSdetail += "Authentication(認證方式):" + "Single(該漏洞要求攻擊者登錄到系統中)" + '\n'
         elif a[2].split(":")[1] == "N":
             CVSSdetail += "Authentication(認證方式):" + "NONE" + '\n'
-
         if a[3].split(":")[1] == "N":
             CVSSdetail += "Confidentiality Impact(機密性影響):" + "NONE" + '\n'
         elif a[3].split(":")[1] == "P":
             CVSSdetail += "Confidentiality Impact(機密性影響):" + "Partial(攻擊者可以取得機密資料，但無法使用該資料)" + '\n'
         elif a[3].split(":")[1] == "C":
             CVSSdetail += "Confidentiality Impact(機密性影響):" + "Complete(攻擊者可以取得機密資料，且可以使用該資料)" + '\n'
-
         if a[4].split(":")[1] == "N":
             CVSSdetail += "Integrity Impact(完整性影響):" + "NONE" + '\n'
         elif a[4].split(":")[1] == "P":
             CVSSdetail += "Integrity Impact(完整性影響):" + "Partial(攻擊者有部分權限以竄改某些資料，對含有漏洞之元件影響較小)" + '\n'
         elif a[4].split(":")[1] == "C":
             CVSSdetail += "Integrity Impact(完整性影響):" + "Complete(攻擊者有權限竄改所有資料，對含有漏洞之元件有嚴重影響)" + '\n'
-
         if a[5].split(":")[1] == "N":
             CVSSdetail += "Availability Impact(可用性影響):" + "NONE" + '\n'
         elif a[5].split(":")[1] == "P":
@@ -116,6 +112,8 @@ def Get_Cve_CVSSdetail20(CVE):
             CVSSdetail += "Availability Impact(可用性影響):" + "Complete(攻擊者有權限竄改所有資料，對含有漏洞之元件有嚴重影響)" + '\n'
 
         return CVSSdetail
+
+
 def Get_Cve_CVSSdetail3X(CVE):
     urlNVD = "https://nvd.nist.gov/vuln/detail/" + CVE
     res = requests.get(urlNVD)
@@ -134,43 +132,36 @@ def Get_Cve_CVSSdetail3X(CVE):
             CVSSdetail += "Attack Vector(攻擊向量):" + "Local(在不連接網路的狀況下進行攻擊)" + '\n'
         elif a[1].split(":")[1] == "P":
             CVSSdetail += "Attack Vector(攻擊向量):" + "Physical(需接觸到實體機器才能進行攻擊)" + '\n'
-
         if a[2].split(":")[1] == "L":
             CVSSdetail += "Attack Complexity(攻擊複雜度):" + "LOW" + '\n'
         elif a[2].split(":")[1] == "H":
             CVSSdetail += "Attack Complexity(攻擊複雜度):" + "HIGH" + '\n'
-
         if a[3].split(":")[1] == "N":
             CVSSdetail += "Privileges Required(是否需要提權):" + "NONE" + '\n'
         elif a[3].split(":")[1] == "L":
             CVSSdetail += "Privileges Required(是否需要提權):" + "LOW" + '\n'
         elif a[3].split(":")[1] == "H":
             CVSSdetail += "Privileges Required(是否需要提權):" + "HIGH" + '\n'
-
         if a[4].split(":")[1] == "N":
             CVSSdetail += "User Interaction(是否需要使用者操作):" + "NONE" + '\n'
         elif a[4].split(":")[1] == "R":
             CVSSdetail += "User Interaction(是否需要使用者操作):" + "Required" + '\n'
-
         if a[5].split(":")[1] == "U":
             CVSSdetail += "Scope(影響範圍):" + "Unchanged(僅影響含有漏洞的元件本身)" + '\n'
         elif a[5].split(":")[1] == "C":
             CVSSdetail += "Scope(影響範圍):" + "Changed(會影響到含有漏洞的元件以外的元件)" + '\n'
-
         if a[6].split(":")[1] == "N":
             CVSSdetail += "Confidentiality(機密性影響):" + "NONE" + '\n'
         elif a[6].split(":")[1] == "L":
             CVSSdetail += "Confidentiality(機密性影響):" + "LOW(攻擊者可以取得機密資料，但無法使用該資料)" + '\n'
         elif a[6].split(":")[1] == "H":
             CVSSdetail += "Confidentiality(機密性影響):" + "HIGH(攻擊者可以取得機密資料，且可以使用該資料)" + '\n'
-
         if a[7].split(":")[1] == "N":
             CVSSdetail += "Integrity(完整性影響):" + "NONE" + '\n'
         elif a[7].split(":")[1] == "L":
             CVSSdetail += "Integrity(完整性影響):" + "LOW(攻擊者有部分權限以竄改某些資料，對含有漏洞之元件影響較小)" + '\n'
         elif a[7].split(":")[1] == "H":
             CVSSdetail += "Integrity(完整性影響):" + "HIGH(攻擊者有權限竄改所有資料，對含有漏洞之元件有嚴重影響)" + '\n'
-
         if a[8].split(":")[1] == "N":
             CVSSdetail += "Availability(可用性影響):" + "NONE" + '\n'
         elif a[8].split(":")[1] == "L":
@@ -189,7 +180,11 @@ def stackoverflow(CVE):
     stackoverflow+="stackoverflow:"+'\n'
     for i in range(len(aaa)):
         stackoverflow+="https://stackoverflow.com"+aaa[i]['href']+'\n'
-    return stackoverflow
+    if len(aaa)!=0:
+        return stackoverflow
+    else:
+        stackoverflow="stackoverflow:NONE!"+'\n'
+        return stackoverflow
 def Get_Cve_NEW(CVE):
     urlNVD='https://cve.mitre.org/cgi-bin/cvename.cgi?name='+CVE
     res=requests.get(urlNVD)
@@ -201,18 +196,20 @@ def Get_Cve_NEW(CVE):
         SecurityFocus+=detal[0].text.split(":", 1)[1]+'\n'
         return SecurityFocus
     else :
+        SecurityFocus="SecurityFocus:NONE!"+'\n'
         return SecurityFocus
 def Get_Cve_EX(CVE):
     urlNVD='https://cve.mitre.org/cgi-bin/cvename.cgi?name='+CVE
     res=requests.get(urlNVD)
     sp=BeautifulSoup(res.text,'html.parser')
-    detal=sp.find_all("a",string=re.compile("^URL:http://www.exploit-db.com/exploits/"))
+    detal=sp.find_all("a",string=re.compile("exploit-db.com/exploits/"))
     exploits=""
     exploits="exploits:"+'\n'
     if len(detal)!=0:
         exploits+=detal[0].text.split(":", 1)[1]+'\n'
         return exploits
     else :
+        exploits="exploits:NONE!"+'\n'
         return exploits
 def Get_Cve_packetstormsecurity(CVE):
     urlpacketstormsecurity="https://packetstormsecurity.com/search/?q="+CVE
@@ -222,12 +219,28 @@ def Get_Cve_packetstormsecurity(CVE):
     packetstormsecuritytest=""
     packetstormsecuritytest="Packetstormsecurity:"+'\n'
     if len(Description)!=0:
-        packetstormsecuritytest+=urlpacketstormsecurity
+        packetstormsecuritytest+=urlpacketstormsecurity+'\n'
         return packetstormsecuritytest
     else :
         packetstormsecuritytest = "Packetstormsecurity:NONE!" + '\n'
         return packetstormsecuritytest
-
+def Get_Cve_port(port,CVElist):
+    ua = UserAgent()
+    headers = {'User-Agent': ua.random}
+    urlport="https://www.speedguide.net/port.php?port="+port
+    res=requests.get(urlport, headers=headers)
+    sp=BeautifulSoup(res.text,'html.parser')
+    detal=sp.find_all("a",string=re.compile("^CVE-"))
+    cve=""
+    for i in range(len(detal)):
+        k=0
+        for j in range(len(CVElist)):
+            if detal[i].text==CVElist[j]:
+                cve+=detal[i].text+"*"+'\n'
+                k+=1
+        if k==0:
+            cve+=detal[i].text+'\n'
+    return (urlport+'\n'+cve)
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -314,35 +327,41 @@ def handle_message(event):
                 a += "🇨🇱" + '\n'
             i = 0
             a += "--------------------------------" + '\n'
+            CVElist = []
             for item in host['vulns']:
-                i += 1
+                Cve = item.replace('!', '')
+                Cve = str(Cve)
+                CVElist.append(Cve)
+            CVElist=sorted(CVElist, reverse=False)
+            for item in host['data']:
+                a += "Port:" + str(item['port']) + '\n'
+                a += Get_Cve_port(str(item['port']), CVElist)
+            for i in range(len(CVElist)):
+                CVE = CVElist[i]
+
                 if i < 3:
-                    CVE = item.replace('!', '')
-                    CVE = str(CVE)
+
 
                     a += CVE + ':' + '\n'
                     a += Get_Cve_Description(CVE) + Get_Cve_NVD(CVE) + stackoverflow(CVE) + Get_Cve_NEW(
                         CVE) + Get_Cve_EX(CVE) + Get_Cve_packetstormsecurity(CVE)
                     a += "--------------------------------" + '\n'
                 elif i >= 3 and i < 5:
-                    CVE = item.replace('!', '')
-                    CVE = str(CVE)
+
 
                     b += CVE + ':' + '\n'
                     b += Get_Cve_Description(CVE) + Get_Cve_NVD(CVE) + stackoverflow(CVE) + Get_Cve_NEW(
                         CVE) + Get_Cve_EX(CVE) + Get_Cve_packetstormsecurity(CVE)
                     b += "--------------------------------" + '\n'
                 elif i >= 5 and i < 7:
-                    CVE = item.replace('!', '')
-                    CVE = str(CVE)
+
 
                     c += CVE + ':' + '\n'
                     c += Get_Cve_Description(CVE) + Get_Cve_NVD(CVE) + stackoverflow(CVE) + Get_Cve_NEW(
                         CVE) + Get_Cve_EX(CVE) + Get_Cve_packetstormsecurity(CVE)
                     c += "--------------------------------" + '\n'+""
                 elif i >= 7:
-                    CVE = item.replace('!', '')
-                    CVE = str(CVE)
+
                     d += CVE + '\n'
         except:
             'An error occured'
@@ -414,6 +433,7 @@ def handle_message(event):
     #message = TextSendMessage(text=a)
     #line_bot_api.reply_message(event.reply_token, message)
 
+
 import os
 import requests
 import shodan
@@ -421,7 +441,10 @@ import re
 import socket
 import nmap
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+
 
